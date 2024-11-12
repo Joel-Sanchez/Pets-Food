@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  pets-food-db:
+    image: postgres:15.3
+    container_name: pets-food-database
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=joel
+      - POSTGRES_PASSWORD=petsfood123
+      - POSTGRES_DB=pets_food_db
+    volumes:
+      - ./postgres:/var/lib/postgresql/data

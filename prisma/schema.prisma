@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id        Int    @id @default(autoincrement())
+  usuario   String @unique
+  contrasena String
+  name      String
+  ventas    sales[]
+  rol       String  @default("empleado") // Roles: admin o empleado
+}
+
+model categories {
+  id          Int     @id @default(autoincrement())
+  nombre      String  
+  descripcion String?
+  productos   products[]
+}
+
+model products {
+  id             Int     @id @default(autoincrement())
+  codigo_barras  String  @unique
+  descripcion    String  
+  cantidad       Int     
+  precio         Float   
+  contador_ventas Int    @default(0)
+  categoria_id   Int
+  categories     categories @relation(fields: [categoria_id], references: [id])
+   sale_details   sale_details[] // Relación con sale_details
+}
+
+model sales {
+  venta_id      Int     @id @default(autoincrement())
+  usuario_id    Int
+  fecha_venta   DateTime
+  hora          DateTime
+  total         Float   
+  efectivo      Float   
+  cambio        Float   
+  users         users    @relation(fields: [usuario_id], references: [id])
+  sale_details  sale_details[] // Relación con sale_details
+}
+
+model sale_details {
+  id_venta_detalle Int     @id @default(autoincrement())
+  venta_id        Int
+  producto_id     Int
+  cantidad        Int     
+  precio_unitario Float    
+  subtotal        Float    
+  sales          sales    @relation(fields: [venta_id], references: [venta_id])
+  products       products @relation(fields: [producto_id], references: [id])
+}
